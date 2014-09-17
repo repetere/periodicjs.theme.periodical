@@ -79,13 +79,15 @@ var scrollY = function () {
 var toggle = function (reveal) {
 	isAnimating = true;
 
-	if (reveal) {
-		classie.add(container, 'modify');
-	}
-	else {
-		noscroll = true;
-		disable_scroll();
-		classie.remove(container, 'modify');
+	if (container) {
+		if (reveal) {
+			classie.add(container, 'modify');
+		}
+		else {
+			noscroll = true;
+			disable_scroll();
+			classie.remove(container, 'modify');
+		}
 	}
 
 	// simulating the end of the transition:
@@ -110,7 +112,7 @@ var scrollPage = function () {
 		window.scrollTo(0, 0);
 	}
 
-	if (classie.has(container, 'notrans')) {
+	if (container && classie.has(container, 'notrans')) {
 		classie.remove(container, 'notrans');
 		return false;
 	}

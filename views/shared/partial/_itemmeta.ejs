@@ -1,14 +1,29 @@
-<div class="width100">
-	<% if(metaauthor) {
-			if(metaauthor.firstname && metaauthor.lastname){
-				%>by <a href="/author/<%= metaauthor.username %>"><%= metaauthor.firstname %>  <%= metaauthor.lastname %></a> <%
-			}
-			else{
-				%>by <a href="/author/<%= metaauthor.username %>"><%= metaauthor.username %></a> &mdash; <%
-			}
+<p>
+	by 
+	<strong>
+	<% if(metaauthor.firstname && metaauthor.lastname){
+			%><a href="/author/<%= metaauthor.username %>"><%= metaauthor.firstname %>  <%= metaauthor.lastname %></a> <%
 		}
-		if(metadate){
-				var d = new Date(metadate);
-				%> <%= (d.getMonth()+1) %>/<%= d.getDate() %>/<%= d.getFullYear() %> <%
-		}%>
-</div>
+		else{
+			%><a href="/author/<%= metaauthor.username %>"><%= metaauthor.username %></a> <%
+		} %>
+	</strong> 
+	&#8212; Posted 	
+	<% if(item.categories && item.categories.length >0){
+		%> in <%
+			for(var x = 0; x < item.categories.length; x++){
+				%>
+				<strong><a href="/section/<%- item.categories[x].name %>"><%- item.categories[x].title %></a></strong><% if(x === item.categories.length-2){%> &<%}else{%>,<%}%> 
+				<%
+			}
+		} %>
+	on 
+	<strong>
+	<%
+	if(metadate){
+			var d = new Date(metadate);
+			%> <%= (d.getMonth()+1) %>/<%= d.getDate() %>/<%= d.getFullYear() %> <%
+	}
+	%>
+	</strong>
+</p>

@@ -2,11 +2,11 @@
 
 body {
 	background: #fff;
-	color: #69606b;
+	color: #333;
 	font-weight: 400;
 	font-size: 22px;
 	line-height: 1.5;
-	font-family: 'Raleway', Arial, sans-serif;
+	font-family: Arial, sans-serif;
 	text-rendering: optimizeLegibility;
 	-webkit-font-smoothing: antialiased;
 	overflow-x: hidden;
@@ -25,9 +25,9 @@ body {
 	background: #f1f1f1;
 }
 
-.demo-1 {
-	background: #43434b;
-}
+// .demo-1 {
+// 	background: #43434b;
+// }
 
 a {
 	outline: none;
@@ -74,6 +74,12 @@ html, body, .container, .header {
     margin: 0 auto;
     min-height: 560px;
     width: 100%;
+    .title{
+        h1{
+            color:#fff;
+            // text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+        }
+    }
 }
 .bg-img {
     position: absolute;
@@ -111,13 +117,13 @@ html, body, .container, .header {
     transform: translateX(-50%) translateY(-50%);
     h1 {
         padding: 0 0 0.2em;
-        color: #fff;
+        // color: #333;
         font-weight: 800;
         font-size: 3.25em;
         margin: 0 auto;
     }
     p {
-        color: #fff;
+        // color: #fff;
         padding: 0 0 0.6em;
         font-weight: 300;
         font-size: 0.85em;
@@ -159,12 +165,12 @@ button.trigger {
         width: 100%;
         height: 100%;
         color: #fff;
-        content: "\e097";
+        content: "\2193";
         text-transform: none;
         font-weight: normal;
         font-style: normal;
         font-variant: normal;
-        font-family: 'icomoon';
+        // font-family: 'icomoon';
         line-height: 1;
         speak: none;
         -webkit-font-smoothing: antialiased;
@@ -201,6 +207,7 @@ button.trigger:focus {
     outline: none;
 }
 .content {
+    min-height: 110%;
     margin: 0 auto;
     padding: 0 0 3em;
     & > div:not(.title) {
@@ -451,7 +458,7 @@ button.trigger:focus {
     }
 }
 .intro-effect-fadeout.modify .header h1,.intro-effect-fadeout .header p {
-    color: #514753;
+    color: #333;
 }
 .intro-effect-fadeout.modify .header p:nth-child(2),.intro-effect-fadeout.modify .header p:nth-child(3) {
     opacity: 1;
@@ -888,7 +895,7 @@ button.trigger:focus {
     .content {
         & > div {
             margin-top: 50px;
-            color: #b2b2c0;
+            color: #5F5F63;
         }
     }
 }
@@ -1121,6 +1128,56 @@ button.trigger:focus {
     background: rgba(71,63,59,0.1);
 }
 
+.periodical-page-border{
+    position: fixed;
+    z-index: 100000;
+    background: #efefef;
+    &.top{
+        height: 0.5em;
+        width: 100%;
+        top:0;
+    }
+    &.right{
+        height: 100%;
+        width: 0.5em;
+        right:0;
+    }
+    &.left{
+        height: 100%;
+        width: 0.5em;
+        left:0;
+    }
+    &.bottom{
+        height: 0.5em;
+        width: 100%;
+        bottom:0;
+    }
+};
+.tags{
+    border-top: 1px solid #5F5F63;
+    margin:-5em 3em 6em;
+}
+.width50{
+    width: 50%;
+}
+.float-left{
+    float: left;
+}
+.float-right{
+    float: right;
+}
+.text-left{
+    text-align: left;
+}
+.text-right{
+    text-align: right;
+}
+footer{
+    margin: 2em 2em;
+    position: relative;
+    bottom: 1em;
+    font-size: 70%;
+}
 
 /* Media Queries */
 @media screen and (max-width: 47em) {
