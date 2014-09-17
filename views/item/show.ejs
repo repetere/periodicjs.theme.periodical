@@ -1,9 +1,52 @@
 <% include ../shared/header %>
-<% include ../shared/nav %>
-	<div class="width100">
-		<% var fullitem=true; 
-			var collectionitem=false;
-		%>
-		<% include ../shared/partial/_item %>
+<!-- < % include ../shared/nav % > -->
+<header class="header">
+	<div class="bg-img">
+		<img id="background-media-element" class="lazyload" src=
+		<% if(item.primaryasset && item.primaryasset.fileurl){%>
+				"<%- item.primaryasset.fileurl  %>"
+			<%}
+			else{%> "<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','img') %>/periodical-default-background.jpg" <%} %>
+		 alt="Background Image"/>
 	</div>
+	<div class="title">
+		<!-- <nav class="codrops-demos">
+			<a class="current-demo" href="index.html">Push</a>
+			<a href="index2.html">Fade Out</a>
+			<a href="index3.html">Sliced</a>
+			<a href="index4.html">Side</a>
+			<a href="index5.html">Fixed Side</a>
+			<a href="index6.html">Grid</a>
+			<a href="index7.html">Jam 3</a>
+		</nav> -->
+		<h1><%- item.title  %></h1>
+	</div>
+</header>
+<button class="trigger" data-info="Click to see the header effect"><span>Trigger</span></button>
+<div class="title">
+<!-- 	<nav class="codrops-demos">
+			<a class="current-demo" href="index.html">Push</a>
+			<a href="index2.html">Fade Out</a>
+			<a href="index3.html">Sliced</a>
+			<a href="index4.html">Side</a>
+			<a href="index5.html">Fixed Side</a>
+			<a href="index6.html">Grid</a>
+			<a href="index7.html">Jam 3</a>
+		</nav> -->
+	<h1><%- item.title  %></h1>
+	<% if(item.contenttypeattributes && item.contenttypeattributes.periodical){ %>
+		<p class="subline"><%- item.contenttypeattributes.periodical.dek %></p>
+	<% } %>
+	<%
+		var metaauthor = item.primaryauthor;
+		var metadate = item.createdat;
+	%>
+	<% include ../shared/partial/_itemauthor %>
+</div>
+<article class="content">
+	<div>
+		<%- item.content %>
+	</div>
+</article>
+
 <% include ../shared/footer %>
