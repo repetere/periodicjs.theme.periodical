@@ -7,9 +7,10 @@
 			else{%> "<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','img') %>/periodical-default-background.jpg" <%} %>
 		 alt="Background Image"/>
 	</div>
+	<%if(contentEffect!=='sidefixed'){%>
 	<div class="title">
 		<h1><%- contentEnitity.title  %></h1>
-		<% if(contentEffect==='fadeout' || contentEffect==='side'){ %>
+		<% if(contentEffect==='fadeout' || contentEffect==='side' || contentEffect==='jam3'){ %>
 			<% if(contentContentAttributes){ %>
 				<p class="subline"><%- contentEnitity.contenttypeattributes.periodical.dek %></p>
 			<% } %>
@@ -20,5 +21,6 @@
 			<% include _itemmeta %>
 		<% } %>
 	</div>
+	<%}%>
 </header>
-<button class="trigger" data-info="Click to see the header effect"><span>&#8595;</span></button>
+<button class="trigger" data-info="Click to read more"><span>&#8595;</span></button>
