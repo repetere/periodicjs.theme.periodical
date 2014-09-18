@@ -1,3 +1,5 @@
+<% var pagedisplaytype = "content" %>
+<% var pagedisplaytypeSpecific = "item" %>
 <% include ../shared/header %>
 <% contentEnitity = item;
 	contentContentAttributes = (contentEnitity.contenttypeattributes && contentEnitity.contenttypeattributes.periodical)? true : false;
@@ -9,6 +11,9 @@
 	<div class="periodical-page-border right"></div>
 	<div class="periodical-page-border left"></div>
 	<div class="periodical-page-border bottom"></div>
+	<div class="header-container">
+    <% include ../shared/nav %>
+  </div>
 	<% if(contentEffect){ %>
 		<div id="container" class="container intro-effect-<%=contentEnitity.contenttypeattributes.periodical.effect%> <%if(contentStatic){%>modify<%}%>  ">
 	<%}

@@ -1,0 +1,58 @@
+.header-container{
+	z-index:10000;
+	position: fixed;
+	.ha-header {
+		h1 {
+			font-size: 1.3em;
+			img {
+				max-height: 1.5em;
+				top: 0.2em;
+				// position: relative;
+			}
+			a{
+				position: relative;
+				z-index: 10000;
+				color:#fff;
+			}
+			&:hover{
+				font-size: 1.5em;
+			}
+		}
+		nav{
+			a{
+				color: #ececec;
+				-webkit-transition: all 0.5s;
+				-moz-transition: all 0.5s;
+				transition: all 0.5s;
+				font-size:0.7em;
+				&:hover{
+					color: #fff;
+					font-size:0.9em;
+				}
+			}
+		}
+		&.ha-header-rotateBack{
+			height: 5em;
+		}	
+		&.ha-header-rotate{
+			height: 6em;
+		}	
+	}
+}
+
+.ha-header-perspective > div {
+	background: #000;
+}
+
+.ha-header-perspective {
+	-webkit-perspective: 40em;
+	-moz-perspective: 40em;
+	perspective: 40em;
+
+	.ha-header-bottom {
+		background: #333;
+		a{
+			color:#333;
+		}
+	}
+}

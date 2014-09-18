@@ -1,6 +1,8 @@
 'use strict';
 
 var classie = require('classie'),
+	periodicalTheme = require('./periodical.theme'),
+	theme = new periodicalTheme(),
 	keys = [32, 37, 38, 39, 40],
 	wheelIter = 0, // disable/enable scroll (mousewheel and keys) from http://stackoverflow.com/a/4770179					
 	// left: 37, up: 38, right: 39, down: 40,
@@ -13,6 +15,30 @@ var classie = require('classie'),
 	isAnimating,
 	container,
 	trigger;
+var lazyloadBackgroundMedia = function () {
+	classie.removeClass(backgroundMedia, 'lazyload');
+};
+
+var sizeAndPositionBackgroundMedia = function () {
+	if (backgroundMedia.clientWidth > window.innerWidth || backgroundMedia.clientHeight < window.innerHeight) {
+		if (backgroundMedia.clientWidth > window.innerWidth) {
+			var offsetMarginLeft = (backgroundMedia.clientWidth - window.innerWidth) / 2 * -1;
+			backgroundMedia.style['margin-left'] = offsetMarginLeft + 'px';
+		}
+		backgroundMedia.style.width = 'auto';
+		backgroundMedia.style.height = '100%';
+	}
+	else if (backgroundMedia.clientWidth <= window.innerWidth) {
+		backgroundMedia.style.width = '100%';
+		backgroundMedia.style.height = 'auto';
+		backgroundMedia.style['margin-left'] = '0px';
+		// var offsetMarginTop = (backgroundMedia.clientHeight - window.innerHeight) / 2 * -1;
+		// backgroundMedia.style.top = offsetMarginTop + 'px';
+	}
+	if (classie.hasClass(backgroundMedia, 'lazyload')) {
+		lazyloadBackgroundMedia();
+	}
+};
 
 // detect if IE : from http://stackoverflow.com/a/16657946		
 var ie = function () {
@@ -87,6 +113,7 @@ var toggle = function (reveal) {
 			noscroll = true;
 			disable_scroll();
 			classie.remove(container, 'modify');
+			sizeAndPositionBackgroundMedia();
 		}
 	}
 
@@ -113,6 +140,7 @@ var scrollPage = function () {
 	}
 
 	if (container && classie.has(container, 'notrans')) {
+		sizeAndPositionBackgroundMedia();
 		classie.remove(container, 'notrans');
 		return false;
 	}
@@ -126,31 +154,6 @@ var scrollPage = function () {
 	}
 	else if (scrollVal > 0 && !isRevealed) {
 		toggle(1);
-	}
-};
-
-var lazyloadBackgroundMedia = function () {
-	classie.removeClass(backgroundMedia, 'lazyload');
-};
-
-var sizeAndPositionBackgroundMedia = function () {
-	if (backgroundMedia.clientWidth > window.innerWidth || backgroundMedia.clientHeight < window.innerHeight) {
-		if (backgroundMedia.clientWidth > window.innerWidth) {
-			var offsetMarginLeft = (backgroundMedia.clientWidth - window.innerWidth) / 2 * -1;
-			backgroundMedia.style['margin-left'] = offsetMarginLeft + 'px';
-		}
-		backgroundMedia.style.width = 'auto';
-		backgroundMedia.style.height = '100%';
-	}
-	else if (backgroundMedia.clientWidth <= window.innerWidth) {
-		backgroundMedia.style.width = '100%';
-		backgroundMedia.style.height = 'auto';
-		backgroundMedia.style['margin-left'] = '0px';
-		// var offsetMarginTop = (backgroundMedia.clientHeight - window.innerHeight) / 2 * -1;
-		// backgroundMedia.style.top = offsetMarginTop + 'px';
-	}
-	if (classie.hasClass(backgroundMedia, 'lazyload')) {
-		lazyloadBackgroundMedia();
 	}
 };
 

@@ -14,7 +14,9 @@
 	<meta name="Resource-type" content="Document" />
 	<link rel="icon" type="image/png" href="/favicon.png">
   <link href="<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','stylesheets') %>periodical.css" rel="stylesheet">
-  <script src="<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','js') %>item.min.js"></script>
+  <% if(typeof pagedisplaytype ==='string' && pagedisplaytype==='content'){%>  <script src="<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','js') %>item.min.js"></script><%}%>
+
+
 	<% if(pagedata && periodic){%>
 		<% var headertags = locals.viewhelper.includeJavaScripts(pagedata.headerjs); %><%- headertags %>
 	<%}%>
