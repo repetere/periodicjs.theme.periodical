@@ -596,7 +596,8 @@ button.trigger:focus {
             font-style: italic;
             font-weight: 400;
             padding: 0 0 0.5em 0;
-            color: #4B4A4A;
+            // color: #4B4A4A;
+            color: #000;
         }
         p {
             opacity: 0;
@@ -647,7 +648,8 @@ button.trigger:focus {
     }
 }
 .intro-effect-side button.trigger span::before,.intro-effect-side button.trigger::before {
-    color: #516165;
+    // color: #516165;
+    color: #000;
 }
 .intro-effect-side:not(.notrans) .title,.intro-effect-side:not(.notrans) .bg-img::before,.intro-effect-side:not(.notrans) .bg-img::after {
     -webkit-transition-delay: 0.3s;
@@ -1138,6 +1140,14 @@ footer{
 
     .tags{
         margin:0 5em 6em;
+    }
+}
+
+.container{
+    article{
+        &.content{
+            line-height: 1.9em;
+        }
     }
 }
 
