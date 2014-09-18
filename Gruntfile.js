@@ -28,6 +28,7 @@ module.exports = function (grunt) {
 			all: [
 				'Gruntfile.js',
 				'routes.js',
+				'scripts/**/*.js',
 				'views/**/*.js',
 				'resources/**/*.js',
 				'test/**/*.js',
@@ -115,6 +116,7 @@ module.exports = function (grunt) {
 					'Gruntfile.js',
 					'routes.js',
 					'contoller/**/*.js',
+					'scripts/**/*.js',
 					'resources/**/*.js',
 					'resources/**/*.less',
 					'test/**/*.js',
