@@ -24,7 +24,8 @@
   "dependencies": {
     "async": "0.9.0",
     "classie": ">=0.1.0",
-    "periodicjs.theme-component.navigation-header": "^0.1.1"
+    "linotypejs": "~1.0.3",
+    "periodicjs.theme-component.navigation-header": "~1.0.1"
   },
   "devDependencies": {
     "browserify": "~4.2.1",

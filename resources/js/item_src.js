@@ -14,31 +14,9 @@ var classie = require('classie'),
 	noscroll,
 	isAnimating,
 	container,
+	resizeMedia,
+	lazyLoadMedia,
 	trigger;
-var lazyloadBackgroundMedia = function () {
-	classie.removeClass(backgroundMedia, 'lazyload');
-};
-
-var sizeAndPositionBackgroundMedia = function () {
-	if (backgroundMedia.clientWidth > window.innerWidth || backgroundMedia.clientHeight < window.innerHeight) {
-		if (backgroundMedia.clientWidth > window.innerWidth) {
-			var offsetMarginLeft = (backgroundMedia.clientWidth - window.innerWidth) / 2 * -1;
-			backgroundMedia.style['margin-left'] = offsetMarginLeft + 'px';
-		}
-		backgroundMedia.style.width = 'auto';
-		backgroundMedia.style.height = '100%';
-	}
-	else if (backgroundMedia.clientWidth <= window.innerWidth) {
-		backgroundMedia.style.width = '100%';
-		backgroundMedia.style.height = 'auto';
-		backgroundMedia.style['margin-left'] = '0px';
-		// var offsetMarginTop = (backgroundMedia.clientHeight - window.innerHeight) / 2 * -1;
-		// backgroundMedia.style.top = offsetMarginTop + 'px';
-	}
-	if (classie.hasClass(backgroundMedia, 'lazyload')) {
-		lazyloadBackgroundMedia();
-	}
-};
 
 // detect if IE : from http://stackoverflow.com/a/16657946		
 var ie = function () {
@@ -103,6 +81,8 @@ var scrollY = function () {
 };
 
 var toggle = function (reveal) {
+	backgroundMedia = document.getElementById('background-media-element');
+	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
 	isAnimating = true;
 
 	if (container) {
@@ -113,7 +93,9 @@ var toggle = function (reveal) {
 			noscroll = true;
 			disable_scroll();
 			classie.remove(container, 'modify');
-			sizeAndPositionBackgroundMedia();
+			if (backgroundMedia) {
+				theme.sizeAndPositionBackgroundMedia(backgroundMedia);
+			}
 		}
 	}
 
@@ -129,6 +111,8 @@ var toggle = function (reveal) {
 };
 
 var scrollPage = function () {
+	backgroundMedia = document.getElementById('background-media-element');
+	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
 	scrollVal = scrollY();
 
 	if (noscroll && !ie) {
@@ -140,7 +124,9 @@ var scrollPage = function () {
 	}
 
 	if (container && classie.has(container, 'notrans')) {
-		sizeAndPositionBackgroundMedia();
+		if (backgroundMedia) {
+			theme.sizeAndPositionBackgroundMedia(backgroundMedia);
+		}
 		classie.remove(container, 'notrans');
 		return false;
 	}
@@ -159,12 +145,15 @@ var scrollPage = function () {
 
 document.addEventListener('DOMContentLoaded', function ( /* e */ ) {
 	backgroundMedia = document.getElementById('background-media-element');
-	backgroundMedia.addEventListener('load', sizeAndPositionBackgroundMedia);
-	backgroundMedia.addEventListener('loadeddata', sizeAndPositionBackgroundMedia);
+	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
+	backgroundMedia.addEventListener('load', resizeMedia);
+	backgroundMedia.addEventListener('loadeddata', resizeMedia);
 }, false);
 
 window.addEventListener('resize', function ( /* e */ ) {
-	sizeAndPositionBackgroundMedia();
+	if (backgroundMedia) {
+		theme.sizeAndPositionBackgroundMedia(backgroundMedia);
+	}
 });
 
 window.addEventListener('scroll', scrollPage, false);
@@ -173,7 +162,8 @@ window.addEventListener('load', function () {
 	backgroundMedia = document.getElementById('background-media-element');
 	container = document.getElementById('container');
 	trigger = container.querySelector('button.trigger');
-	sizeAndPositionBackgroundMedia();
+	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
+	lazyLoadMedia = theme.lazyloadBackgroundMedia(backgroundMedia);
 	// refreshing the page...
 	var pageScroll = scrollY();
 	noscroll = pageScroll === 0;

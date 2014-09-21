@@ -1,12 +1,5 @@
 <header class="header">
-	<div class="bg-img">
-		<img id="background-media-element" class="lazyload" src=
-		<% if(contentEnitity.primaryasset && contentEnitity.primaryasset.fileurl){%>
-				"<%- contentEnitity.primaryasset.fileurl  %>"
-			<%}
-			else{%> "<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','img') %>/periodical-default-background.jpg" <%} %>
-		 alt="Background Image"/>
-	</div>
+	<% include _contentEntity_bgImg %>
 	<%if(contentEffect!=='sidefixed'){%>
 	<div class="title">
 		<h1><%- contentEnitity.title  %></h1>

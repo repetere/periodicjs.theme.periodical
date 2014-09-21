@@ -11,6 +11,9 @@ module.exports = function (periodic) {
 	// create new route to document items to post
 	themeRouter.get('periodical/:id', itemController.loadFullItem, itemController.show);
 	themeRouter.get('/items', itemController.loadItems, itemController.index);
+	themeRouter.get('/', function (req, res) {
+		res.send('homepage');
+	});
 
 	periodic.app.use(themeRouter);
 };

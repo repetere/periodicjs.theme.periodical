@@ -1083,6 +1083,450 @@ function hasOwnProperty(obj, prop) {
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./support/isBuffer":6,"_process":5,"inherits":4}],8:[function(require,module,exports){
 /*
+ * linotype
+ * @{@link https://github.com/typesettin/linotype}
+ *
+ * @copyright Copyright (c) 2014 Typesettin. All rights reserved.
+ */
+
+'use strict';
+
+module.exports = require('./lib/linotype');
+
+},{"./lib/linotype":9}],9:[function(require,module,exports){
+/**
+ * @title Linotype
+ * @{@link https://github.com/typesettin/Linotype}
+ * @author Yaw Joseph Etse
+ * @copyright Copyright (c) 2014 Typesettin. All rights reserved.
+ * @license MIT
+ */
+
+'use strict';
+
+var classie = require('classie'),
+	extend = require('util-extend'),
+	events = require('events'),
+	util = require('util'),
+	touchStartY = 0,
+	touchStartX = 0,
+	touchMoveStartY = 0,
+	touchMoveStartX = 0,
+	touchEndY = 0,
+	touchEndX = 0;
+
+/**
+ * A module that represents a Linotype object, a Linotyper is a page composition tool.
+ * @{@link https://github.com/typesettin/linotype}
+ * @author Yaw Joseph Etse
+ * @copyright Copyright (c) 2014 Typesettin. All rights reserved.
+ * @license MIT
+ * @constructor Linotype
+ * @requires module:classie
+ * @requires module:util-extent
+ * @requires module:util
+ * @requires module:events
+ */
+var Linotype = function (options) {
+	/** call event emitter */
+	events.EventEmitter.call(this);
+
+	/** module default configuration */
+	var defaults = {
+		idSelector: 'linotype',
+		start: 0,
+		currentSection: 0,
+		delay: 300,
+		easingdelay: 700,
+		easing: false,
+		isMoving: false,
+		keyboardScrolling: true,
+		touchevents: true,
+		mousewheel: true,
+		sections: null,
+		numSections: 0,
+		touchSensitivity: 5,
+		sectionHeight: null,
+		callback: false,
+		normalscroll: false,
+		continuous: false
+	};
+	this.$el = null;
+
+	/** extended default options */
+	this.options = extend(defaults, options);
+
+	this.init(this.options);
+};
+
+/** Inherit event emitter */
+util.inherits(Linotype, events.EventEmitter);
+
+/**
+ * Sets up a new lintotype component.
+ */
+Linotype.prototype.initEventListeners = function () {
+	/**
+	 * recalculate the window dimensions.
+	 * @event resizeEventHandler
+	 * @this {Linotype}
+	 */
+	var resizeEventHandler = function () {
+		this.options.sectionHeight = this.options.$el.parentNode.clientHeight;
+	}.bind(this);
+
+	/**
+	 * handle keyboard arrow events.
+	 * @event keyboardEventHandler
+	 * @param {object} e touch event object
+	 * @this {Linotype}
+	 */
+	var keyboardEventHandler = function (e) {
+		switch (e.which) {
+			//up
+		case 38:
+		case 33:
+			this.moveSectionUp();
+			break;
+
+			//down
+		case 40:
+		case 34:
+			this.moveSectionDown();
+			break;
+
+			// 	//left
+			// case 37:
+			// 	this.moveSlideLeft();
+			// 	break;
+
+			// 	//right
+			// case 39:
+			// 	this.moveSlideRight();
+			// 	break;
+
+		default:
+			return; // exit this handler for other keys
+		}
+	}.bind(this);
+
+	/**
+	 * handle mouse scroll wheel events.
+	 * @event mouseWheelHandler
+	 * @param {object} e touch event object
+	 * @this {Linotype}
+	 */
+	var mouseWheelHandler = function (e) {
+		e = window.event || e;
+		var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.deltaY || -e.detail)));
+
+		if (e.wheelDelta && e.deltaY) {
+			var scrollratio = (e.wheelDelta / -e.deltaY),
+				scrollfactor = (e.wheelDelta / 10);
+			if (delta > 0 && scrollfactor > scrollratio) {
+				this.moveSectionUp({
+					checkScroll: true
+				});
+			}
+			else if (delta < 0 && (scrollfactor * -1) > scrollratio) {
+				this.moveSectionDown({
+					checkScroll: true
+				});
+			}
+		}
+		else {
+			if (delta < 0) {
+				this.moveSectionDown({
+					checkScroll: true
+				});
+			}
+			else {
+				this.moveSectionUp({
+					checkScroll: true
+				});
+			}
+		}
+
+	}.bind(this);
+
+	/**
+	 * Gets the pageX and pageY properties depending on the browser.
+	 * https://github.com/alvarotrigo/fullPage.js/issues/194#issuecomment-34069854
+	 * @param {object} e touch event object
+	 * @returns {object} events object of page touch points
+	 */
+	var getEventsPage = function (e) {
+		var events = [];
+		if (window.navigator.msPointerEnabled) {
+			events.y = e.pageY;
+			events.x = e.pageX;
+		}
+		else if (e.changedTouches) {
+			events.y = e.changedTouches[0].pageY;
+			events.x = e.changedTouches[0].pageX;
+		}
+		else {
+			events.y = e.touches[0].pageY;
+			events.x = e.touches[0].pageX;
+		}
+		return events;
+	};
+
+	/**
+	 * handle touch start events
+	 * @event touchStartHandler
+	 * @param {object} e touch event object
+	 */
+	var touchStartHandler = function (e) {
+		var touchEvents = getEventsPage(e);
+		touchStartY = touchEvents.y;
+		touchStartX = touchEvents.x;
+		if (e.touches) {
+			touchMoveStartY = e.touches[0].screenY;
+			touchMoveStartX = e.touches[0].screenX;
+		}
+	};
+
+	/**
+	 * handle touch move events
+	 * @event touchMoveHandler
+	 * @param {object} e touch event object
+	 * @this {Linotype}
+	 */
+	var touchMoveHandler = function (e) {
+		var touchEvents = getEventsPage(e);
+		touchEndY = touchEvents.y;
+		touchEndX = touchEvents.x;
+
+		// if (e.touches) {
+		// 	this.options.firstsection.style['margin-top'] = (Math.abs(touchMoveStartY - e.touches[0].screenY) + (this.options.sectionHeight * this.options.currentSection)) * -1;
+		// }
+	}.bind(this);
+
+	/**
+	 * handle touch end events
+	 * @event touchEndHandler
+	 * @param {object} e touch event object
+	 */
+	var touchEndHandler = function (e) {
+		var touchEvents = getEventsPage(e);
+		touchEndY = touchEvents.y;
+		touchEndX = touchEvents.x;
+
+		if (!this.options.isMoving) {
+			//is the movement greater than the minimum resistance to scroll?
+			if (Math.abs(touchStartY - touchEndY) > (this.options.sectionHeight / 100 * this.options.touchSensitivity)) {
+				if (touchStartY > touchEndY) {
+					this.moveSectionDown({
+						checkScroll: true
+					});
+				}
+				else if (touchEndY > touchStartY) {
+					this.moveSectionUp({
+						checkScroll: true
+					});
+				}
+			}
+		}
+	}.bind(this);
+
+	if (typeof window === 'object' && typeof window.document === 'object') {
+		window.addEventListener('resize', resizeEventHandler, false);
+		if (this.options.keyboardScrolling) {
+			//if this.options.$el is visable/getboundingrect is in window viewport, then add handler, if not remove
+			window.addEventListener('keydown', keyboardEventHandler, false);
+		}
+		if (this.options.mousewheel) {
+			this.options.$el.addEventListener('mousewheel', mouseWheelHandler, false); //IE9, Chrome, Safari, Oper
+			this.options.$el.addEventListener('wheel', mouseWheelHandler, false); //Firefox
+		}
+		if (this.options.touchevents) {
+			this.options.$el.addEventListener('touchstart', touchStartHandler, false);
+			this.options.$el.addEventListener('MSPointerDown', touchStartHandler, false);
+			this.options.$el.addEventListener('touchmove', touchMoveHandler, false);
+			this.options.$el.addEventListener('MSPointerMove', touchMoveHandler, false);
+			this.options.$el.addEventListener('touchend', touchEndHandler, false);
+			this.options.$el.addEventListener('MSPointerEnd', touchEndHandler, false);
+		}
+	}
+};
+/**
+ * Sets up a new lintotype component.
+ * @param {object} options - configuration options
+ * @emits - init
+ */
+Linotype.prototype.init = function (options) {
+	this.options = options;
+	this.options.$el = document.getElementById(this.options.idSelector);
+	this.options.sections = document.querySelectorAll('#' + this.options.idSelector + ' .section');
+	this.options.firstsection = this.options.sections[0];
+	this.options.numSections = this.options.sections.length;
+	this.options.sectionHeight = this.options.$el.parentNode.clientHeight;
+	this.options.elementParent = this.options.$el.parentNode;
+	if (document.addEventListener && this.options.normalscroll === false) {
+		classie.addClass(this.options.$el, 'linotype-has-js');
+		this.initEventListeners();
+	}
+	if (this.options.easing) {
+		classie.addClass(this.options.$el, 'easing');
+	}
+	if (this.options.start !== 0) {
+		this.section(this.options.start);
+	}
+	this.emit('init', this.options);
+};
+/**
+ * Move Section up Shortcut.
+ * @param {object} moveOptions - only move if there is not an internal element with a scroll
+ */
+Linotype.prototype.moveSectionUp = function (moveOptions) {
+	var currentIndex = this.options.currentSection,
+		limitOnScroll = (moveOptions && moveOptions.checkScroll);
+	if (limitOnScroll && this.options.sections[currentIndex].scrollTop > 10) {
+		currentIndex = this.options.currentSection;
+	}
+	else {
+		this.moveSection({
+			direction: 'up'
+		});
+	}
+};
+/**
+ * Move Section down Shortcut.
+ * @param {object} moveOptions - only move if there is not an internal element with a scroll
+ */
+Linotype.prototype.moveSectionDown = function (moveOptions) {
+	var currentIndex = this.options.currentSection,
+		limitOnScroll = (moveOptions && moveOptions.checkScroll);
+	if (limitOnScroll && this.options.sections[currentIndex].scrollHeight > this.options.sectionHeight && ((this.options.sections[currentIndex].scrollTop + this.options.sectionHeight) < this.options.sections[currentIndex].scrollHeight)) {
+		currentIndex = this.options.currentSection;
+	}
+	else {
+		this.moveSection({
+			direction: 'down'
+		});
+	}
+};
+/**
+ * Move Section down Shortcut.
+ * @param {number} sectionIndex - index of section ot jump to
+ */
+Linotype.prototype.section = function (sectionIndex) {
+	if (!this.options.isMoving) {
+		var index = (sectionIndex) ? parseInt(sectionIndex, 10) : 0;
+		this.options.sections[sectionIndex].scrollTop = 0;
+		this.options.isMoving = true;
+		this.options.firstsection.style['margin-top'] = this.options.sectionHeight * -1 * index + 'px';
+		this.options.currentSection = index;
+		for (var i = 0; i < this.options.numSections; i++) {
+			classie.removeClass(this.options.sections[i], 'active');
+		}
+		classie.addClass(this.options.sections[index], 'active');
+		var delaytiming = (this.options.easing) ? this.options.easingdelay : this.options.delay;
+		var t = setTimeout(function () {
+			this.options.isMoving = false;
+			clearTimeout(t);
+		}.bind(this), delaytiming);
+		if (typeof this.options.callback === 'function') {
+			this.options.callback(index);
+		}
+		this.emit('section', index);
+	}
+};
+/**
+ * Shift section
+ * @inner
+ * @param {object} options - move direction options
+ */
+Linotype.prototype.moveSection = function (options) {
+	var direction = 'down';
+
+	switch (options.direction) {
+	case 'up':
+		direction = 'up';
+		if (this.options.currentSection > 0) {
+			this.section(this.options.currentSection - 1);
+		}
+		else if (this.options.continuous && this.options.currentSection === 0) {
+			this.section(this.options.numSections - 1);
+		}
+		break;
+	default:
+		direction = 'down';
+		if (this.options.currentSection < this.options.numSections - 1) {
+			this.section(this.options.currentSection + 1);
+		}
+		else if (this.options.continuous && this.options.currentSection === this.options.numSections - 1) {
+			this.section(0);
+		}
+		break;
+	}
+	this.emit('movedSection', direction);
+};
+/**
+ * Returns current linotype config element.
+ * @return {object} - linotype instance configuration object
+ */
+Linotype.prototype.config = function () {
+	return this.lintotypeDomElement;
+};
+/**
+ * sample event emitter test
+ * @event emitTest
+ * @fires - emittest
+ * @param {object} options sample object to return
+ * @return {object} @param options
+ */
+Linotype.prototype.emitTest = function (options) {
+	this.emit('emittest', options);
+};
+
+module.exports = Linotype;
+
+
+// If there is a window object, that at least has a document property,
+// define Linotype
+if (typeof window === 'object' && typeof window.document === 'object') {
+	window.Linotype = Linotype;
+}
+
+},{"classie":1,"events":3,"util":7,"util-extend":10}],10:[function(require,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+module.exports = extend;
+function extend(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || typeof add !== 'object') return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+}
+
+},{}],11:[function(require,module,exports){
+/*
  * component.navigation-header
  * http://github.amexpub.com/modules/component.navigation-header
  *
@@ -1093,7 +1537,7 @@ function hasOwnProperty(obj, prop) {
 
 module.exports = require('./lib/component.navigation-header');
 
-},{"./lib/component.navigation-header":9}],9:[function(require,module,exports){
+},{"./lib/component.navigation-header":12}],12:[function(require,module,exports){
 /**
  * @title component.navigation-header
  * @{@link https://github.com/typesettin/component.navigation-header}
@@ -1286,227 +1730,25 @@ navigationHeader.prototype._hideSubNav = function () {
 };
 module.exports = navigationHeader;
 
-},{"classie":1,"events":3,"util":7,"util-extend":10}],10:[function(require,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-module.exports = extend;
-function extend(origin, add) {
-  // Don't do anything if add isn't an object
-  if (!add || typeof add !== 'object') return origin;
-
-  var keys = Object.keys(add);
-  var i = keys.length;
-  while (i--) {
-    origin[keys[i]] = add[keys[i]];
-  }
-  return origin;
-}
-
-},{}],11:[function(require,module,exports){
+},{"classie":1,"events":3,"util":7,"util-extend":13}],13:[function(require,module,exports){
+module.exports=require(10)
+},{"/Users/yawetse/Developer/test/periodic150/periodicjs/content/themes/periodicjs.theme.periodical/node_modules/linotypejs/node_modules/util-extend/extend.js":10}],14:[function(require,module,exports){
 'use strict';
 
-var classie = require('classie'),
+var Linotype = require('linotypejs'),
 	periodicalTheme = require('./periodical.theme'),
 	theme = new periodicalTheme(),
-	keys = [32, 37, 38, 39, 40],
-	wheelIter = 0, // disable/enable scroll (mousewheel and keys) from http://stackoverflow.com/a/4770179					
-	// left: 37, up: 38, right: 39, down: 40,
-	// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
-	docElem = window.document.documentElement,
-	backgroundMedia,
-	scrollVal,
-	isRevealed,
-	noscroll,
-	isAnimating,
-	container,
-	resizeMedia,
-	lazyLoadMedia,
-	trigger;
-
-// detect if IE : from http://stackoverflow.com/a/16657946		
-var ie = function () {
-	var undef, rv = -1; // Return value assumes failure.
-	var ua = window.navigator.userAgent;
-	var msie = ua.indexOf('MSIE ');
-	var trident = ua.indexOf('Trident/');
-
-	if (msie > 0) {
-		// IE 10 or older => return version number
-		rv = parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-	}
-	else if (trident > 0) {
-		// IE 11 (or newer) => return version number
-		var rvNum = ua.indexOf('rv:');
-		rv = parseInt(ua.substring(rvNum + 3, ua.indexOf('.', rvNum)), 10);
-	}
-
-	return ((rv > -1) ? rv : undef);
-};
-
-var preventDefault = function (e) {
-	e = e || window.event;
-	if (e.preventDefault) {
-		e.preventDefault();
-	}
-	e.returnValue = false;
-};
-
-var keydown = function (e) {
-	for (var i = keys.length; i--;) {
-		if (e.keyCode === keys[i]) {
-			preventDefault(e);
-			return;
-		}
-	}
-};
-
-var touchmove = function (e) {
-	preventDefault(e);
-};
-
-var wheel = function ( /* e */ ) {
-	// for IE 
-	//if( ie ) {
-	//preventDefault(e);
-	//}
-};
-
-var disable_scroll = function () {
-	window.onmousewheel = document.onmousewheel = wheel;
-	document.onkeydown = keydown;
-	document.body.ontouchmove = touchmove;
-};
-
-var enable_scroll = function () {
-	window.onmousewheel = document.onmousewheel = document.onkeydown = document.body.ontouchmove = null;
-};
-
-var scrollY = function () {
-	return window.pageYOffset || docElem.scrollTop;
-};
-
-var toggle = function (reveal) {
-	backgroundMedia = document.getElementById('background-media-element');
-	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
-	isAnimating = true;
-
-	if (container) {
-		if (reveal) {
-			classie.add(container, 'modify');
-		}
-		else {
-			noscroll = true;
-			disable_scroll();
-			classie.remove(container, 'modify');
-			if (backgroundMedia) {
-				theme.sizeAndPositionBackgroundMedia(backgroundMedia);
-			}
-		}
-	}
-
-	// simulating the end of the transition:
-	setTimeout(function () {
-		isRevealed = !isRevealed;
-		isAnimating = false;
-		if (reveal) {
-			noscroll = false;
-			enable_scroll();
-		}
-	}, 1200);
-};
-
-var scrollPage = function () {
-	backgroundMedia = document.getElementById('background-media-element');
-	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
-	scrollVal = scrollY();
-
-	if (noscroll && !ie) {
-		if (scrollVal < 0) {
-			return false;
-		}
-		// keep it that way
-		window.scrollTo(0, 0);
-	}
-
-	if (container && classie.has(container, 'notrans')) {
-		if (backgroundMedia) {
-			theme.sizeAndPositionBackgroundMedia(backgroundMedia);
-		}
-		classie.remove(container, 'notrans');
-		return false;
-	}
-
-	if (isAnimating) {
-		return false;
-	}
-
-	if (scrollVal <= 0 && isRevealed) {
-		toggle(0);
-	}
-	else if (scrollVal > 0 && !isRevealed) {
-		toggle(1);
-	}
-};
-
-document.addEventListener('DOMContentLoaded', function ( /* e */ ) {
-	backgroundMedia = document.getElementById('background-media-element');
-	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
-	backgroundMedia.addEventListener('load', resizeMedia);
-	backgroundMedia.addEventListener('loadeddata', resizeMedia);
-}, false);
-
-window.addEventListener('resize', function ( /* e */ ) {
-	if (backgroundMedia) {
-		theme.sizeAndPositionBackgroundMedia(backgroundMedia);
-	}
-});
-
-window.addEventListener('scroll', scrollPage, false);
+	LinotypeCollection;
 
 window.addEventListener('load', function () {
-	backgroundMedia = document.getElementById('background-media-element');
-	container = document.getElementById('container');
-	trigger = container.querySelector('button.trigger');
-	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
-	lazyLoadMedia = theme.lazyloadBackgroundMedia(backgroundMedia);
-	// refreshing the page...
-	var pageScroll = scrollY();
-	noscroll = pageScroll === 0;
-
-	disable_scroll();
-
-	if (pageScroll) {
-		isRevealed = true;
-		classie.add(container, 'notrans');
-		classie.add(container, 'modify');
-	}
-
-	trigger.addEventListener('click', function () {
-		toggle('reveal');
+	LinotypeCollection = new Linotype({
+		easing: true
 	});
 
+	window.LinotypeCollection = LinotypeCollection;
 }, false);
 
-},{"./periodical.theme":12,"classie":1}],12:[function(require,module,exports){
+},{"./periodical.theme":15,"linotypejs":8}],15:[function(require,module,exports){
 'use strict';
 
 var navigationHeader = require('periodicjs.theme-component.navigation-header'),
@@ -1555,4 +1797,4 @@ var periodicaltheme = function () {
 
 module.exports = periodicaltheme;
 
-},{"classie":1,"periodicjs.theme-component.navigation-header":8}]},{},[11]);
+},{"classie":1,"periodicjs.theme-component.navigation-header":11}]},{},[14]);

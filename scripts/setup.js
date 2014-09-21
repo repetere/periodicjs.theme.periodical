@@ -6,8 +6,11 @@ var CoreControllerHelper = require('periodicjs.core.controllerhelper'),
 	logger,
 	mongoose,
 	existingPeriodicContentType,
+	existingPeriodicCollectionContentType,
 	usablePeriodicContentType,
+	usablePeriodicCollectionContentType,
 	itemDefaultContenttype,
+	collectionDefaultContenttype,
 	newPeriodicalContentTypeDocument = {
 		title: 'periodical',
 		name: 'periodical',
@@ -25,29 +28,44 @@ var CoreControllerHelper = require('periodicjs.core.controllerhelper'),
 			datatype: 'array',
 			defaultvalue: 'false,true',
 			name: 'static',
+		}, {
+			title: 'in collection preview',
+			datatype: 'array',
+			defaultvalue: 'false,true',
+			name: 'in-collection-preview',
+		}, {
+			title: 'in volume preview',
+			datatype: 'array',
+			defaultvalue: 'false,true',
+			name: 'in-volume-preview',
+		}]
+	},
+	newPeriodicalCollectionContentTypeDocument = {
+		title: 'periodical collection',
+		name: 'periodical-collection',
+		attributes: [{
+			title: 'dek',
+			datatype: 'string',
+			name: 'dek',
+		}, {
+			title: 'effect',
+			datatype: 'array',
+			defaultvalue: 'linotype,slideshow,listical,list,grid',
+			name: 'effect',
+		}, {
+			title: 'static',
+			datatype: 'array',
+			defaultvalue: 'false,true',
+			name: 'static',
+		}, {
+			title: 'in volume preview',
+			datatype: 'array',
+			defaultvalue: 'false,true',
+			name: 'in-volume-preview',
 		}]
 	};
 
-var createDefaultItemContentType = function () {
-	var newDefaultItemContentType = {
-		name: 'item_default_contenttypes'
-	};
 
-	CoreController.createModel({
-		model: AppDBSetting,
-		newdoc: newDefaultItemContentType,
-		callback: function (err, newappsettingdocument) {
-			if (err) {
-				logger.error(err);
-			}
-			else {
-				itemDefaultContenttype = newappsettingdocument;
-				logger.silly('add newly created default content type');
-				updateDefaultItemContentType(itemDefaultContenttype);
-			}
-		}
-	});
-};
 
 var updateDefaultItemContentType = function (appsettingdocumenttouse) {
 	var alreadyHasDefault = false;
@@ -80,6 +98,79 @@ var updateDefaultItemContentType = function (appsettingdocumenttouse) {
 	}
 };
 
+var updateDefaultCollectionContentType = function (appsettingdocumenttouse) {
+	var alreadyHasDefault = false;
+	for (var x in appsettingdocumenttouse.value) {
+		if (usablePeriodicCollectionContentType._id.toString() === appsettingdocumenttouse.value[x].toString()) {
+			alreadyHasDefault = true;
+		}
+	}
+	if (alreadyHasDefault) {
+		logger.silly('appsettingdocumenttouse.value', appsettingdocumenttouse.value, 'already has', usablePeriodicCollectionContentType._id);
+	}
+	else {
+		var objectToModify = {
+			'value': usablePeriodicCollectionContentType._id
+		};
+		CoreController.updateModel({
+			model: AppDBSetting,
+			id: appsettingdocumenttouse._id,
+			appendArray: true,
+			updatedoc: objectToModify,
+			callback: function (err, updatedsetting) {
+				if (err) {
+					logger.error(err);
+				}
+				else {
+					console.log('updated collection settings', updatedsetting);
+				}
+			}
+		});
+	}
+};
+
+var createDefaultItemContentType = function () {
+	var newDefaultItemContentType = {
+		name: 'item_default_contenttypes'
+	};
+
+	CoreController.createModel({
+		model: AppDBSetting,
+		newdoc: newDefaultItemContentType,
+		callback: function (err, newappsettingdocument) {
+			if (err) {
+				logger.error(err);
+			}
+			else {
+				itemDefaultContenttype = newappsettingdocument;
+				logger.silly('add newly created default item content type');
+				updateDefaultItemContentType(itemDefaultContenttype);
+			}
+		}
+	});
+};
+
+var createDefaultCollectionContentType = function () {
+	var newDefaultCollectionContentType = {
+		name: 'collection_default_contenttypes'
+	};
+
+	CoreController.createModel({
+		model: AppDBSetting,
+		newdoc: newDefaultCollectionContentType,
+		callback: function (err, newappsettingdocument) {
+			if (err) {
+				logger.error(err);
+			}
+			else {
+				collectionDefaultContenttype = newappsettingdocument;
+				logger.silly('add newly created default collection content type');
+				updateDefaultCollectionContentType(collectionDefaultContenttype);
+			}
+		}
+	});
+};
+
 var addDefaultItemContentType = function () {
 	CoreController.loadModel({
 		docid: 'item_default_contenttypes',
@@ -101,27 +192,51 @@ var addDefaultItemContentType = function () {
 	});
 };
 
-var checkContentTypePeriodical = function (callback) {
+var addDefaultCollectionContentType = function () {
 	CoreController.loadModel({
-		docid: 'periodical',
+		docid: 'collection_default_contenttypes',
+		model: AppDBSetting,
+		callback: function (err, appsettingdocument) {
+			if (err) {
+				logger.error(err);
+			}
+			else if (appsettingdocument) {
+				collectionDefaultContenttype = appsettingdocument;
+				logger.silly('add default collection content type');
+				updateDefaultCollectionContentType(collectionDefaultContenttype);
+			}
+			else {
+				logger.silly('create new default collection content type');
+				createDefaultCollectionContentType();
+			}
+		}
+	});
+};
+
+var checkContentTypePeriodical = function (docid, callback) {
+	CoreController.loadModel({
+		docid: docid,
 		model: Contenttype,
 		callback: callback
 	});
 };
 
-var updatePeriodicalContentType = function (callback) {
+var updatePeriodicalContentType = function (entitytype, callback) {
+	var entitytypeid = (entitytype === 'collection') ? existingPeriodicCollectionContentType._id : existingPeriodicContentType._id;
+	var entitydefaultcontenttype = (entitytype === 'collection') ? newPeriodicalCollectionContentTypeDocument : newPeriodicalContentTypeDocument;
 	CoreController.updateModel({
 		model: Contenttype,
-		id: existingPeriodicContentType._id,
-		updatedoc: newPeriodicalContentTypeDocument,
+		id: entitytypeid,
+		updatedoc: entitydefaultcontenttype,
 		callback: callback
 	});
 };
 
-var createPeriodicalContentType = function (callback) {
+var createPeriodicalContentType = function (entitytype, callback) {
+	var entitydefaultcontenttype = (entitytype === 'collection') ? newPeriodicalCollectionContentTypeDocument : newPeriodicalContentTypeDocument;
 	CoreController.createModel({
 		model: Contenttype,
-		newdoc: newPeriodicalContentTypeDocument,
+		newdoc: entitydefaultcontenttype,
 		callback: callback
 	});
 };
@@ -135,13 +250,13 @@ var setup = function (resources) {
 	AppDBSetting = mongoose.model('Setting');
 
 	mongoose.connection.on('open', function () {
-		checkContentTypePeriodical(function (err, doc) {
+		checkContentTypePeriodical('periodical', function (err, doc) {
 			if (err) {
 				logger.error(err);
 			}
 			else if (doc) {
 				existingPeriodicContentType = doc;
-				updatePeriodicalContentType(function (err, updatedcontenttype) {
+				updatePeriodicalContentType('item', function (err, updatedcontenttype) {
 					if (err) {
 						logger.error(err);
 					}
@@ -156,7 +271,7 @@ var setup = function (resources) {
 				});
 			}
 			else {
-				createPeriodicalContentType(function (err, newcontenttype) {
+				createPeriodicalContentType('item', function (err, newcontenttype) {
 					if (err) {
 						logger.error(err);
 					}
@@ -165,6 +280,41 @@ var setup = function (resources) {
 						// console.log(newcontenttype);
 						usablePeriodicContentType = newcontenttype;
 						addDefaultItemContentType();
+					}
+				});
+			}
+		});
+
+		checkContentTypePeriodical('periodical_collection', function (err, doc) {
+			if (err) {
+				logger.error(err);
+			}
+			else if (doc) {
+				existingPeriodicCollectionContentType = doc;
+				updatePeriodicalContentType('collection', function (err, updatedcontenttype) {
+					if (err) {
+						logger.error(err);
+					}
+					else {
+						logger.info('Old Periodical Collection Content Type');
+						// console.log(existingPeriodicContentType);
+						logger.info('Updated Periodical Collection Content Type');
+						// console.log(updatedcontenttype);
+						usablePeriodicCollectionContentType = updatedcontenttype;
+						addDefaultCollectionContentType();
+					}
+				});
+			}
+			else {
+				createPeriodicalContentType('collection', function (err, newcollectioncontenttype) {
+					if (err) {
+						logger.error(err);
+					}
+					else {
+						logger.info('createdNewCollectionContentType');
+						// console.log(newcontenttype);
+						usablePeriodicCollectionContentType = newcollectioncontenttype;
+						addDefaultCollectionContentType();
 					}
 				});
 			}

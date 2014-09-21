@@ -1,0 +1,29 @@
+.periodical-collection{
+	.linotype{
+		.bg-img {
+			position: absolute;
+			overflow: hidden;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+			img {
+				position: absolute;
+				top: 0;
+				left: 0;
+				display: block;
+				transition: opacity 1.3s linear 0.1s;
+				opacity: 1;
+				&.lazyload {
+					opacity: 0;
+				}
+			}
+		}
+	}
+    footer{
+        position:fixed;
+        width:90%;
+    }
+}
