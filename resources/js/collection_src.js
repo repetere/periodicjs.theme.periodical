@@ -25,7 +25,7 @@ var Linotype = require('linotypejs'),
 window.addEventListener('load', function () {
 	LinotypeCollection = new Linotype({
 		easing: true,
-		continuous: true,
+		// continuous: true,
 		// callback: function (index) {
 		// 	// if (backgroundMediaElements) {
 		// 	// 	theme.sizeAndPositionBackgroundMedia(backgroundMediaElements[index]);

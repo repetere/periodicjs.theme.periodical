@@ -2,7 +2,7 @@
 	.linotype{
 		article{
 			min-height: 20em;
-			padding:10%;
+			padding: 5em 2em 2em;
 			background: #333;
 			.title{
 				h1{
@@ -16,6 +16,15 @@
 			}
 			&:nth-child(even){
 				background: #707070;
+			}
+			.linotype-content-wrapper{
+				overflow: hidden;
+				overflow-y: auto;
+				height: 100%;
+			}
+			.linotype-content{
+				position: relative;
+				color: #fff;
 			}
 		}
 		.bg-img {
@@ -47,16 +56,16 @@
 					-moz-filter .3 ease-out 0s;
 				-ms-transition: opacity 1s ease-in 0s, 
 					-ms-filter .3 ease-out 0s;
-			&.dim{
-					-webkit-filter: grayscale(50%) contrast(75%) brightness(80%);
-					-moz-filter: grayscale(50%) contrast(75%) brightness(80%);
-					-ms-filter: grayscale(50%) contrast(75%) brightness(80%);
-					filter: grayscale(50%) contrast(75%) brightness(80%);
-				&:hover{	
+			&.dim{	
 					-webkit-filter: grayscale(100%) contrast(150%) brightness(40%);
 					-moz-filter: grayscale(100%) contrast(150%) brightness(40%);
 					-ms-filter: grayscale(100%) contrast(150%) brightness(40%);
 					filter: grayscale(100%) contrast(150%) brightness(40%);
+				&:hover{
+					-webkit-filter: grayscale(50%) contrast(75%) brightness(80%);
+					-moz-filter: grayscale(50%) contrast(75%) brightness(80%);
+					-ms-filter: grayscale(50%) contrast(75%) brightness(80%);
+					filter: grayscale(50%) contrast(75%) brightness(80%);
 				}
 			}
 		}
@@ -69,4 +78,12 @@
 		bottom:0;
 		left:0;
   }
+}
+
+@media screen and (max-width: 27em) {
+  .linotype{
+		article{
+			font-size:85%;
+		}
+	}
 }

@@ -29,6 +29,11 @@ var CoreControllerHelper = require('periodicjs.core.controllerhelper'),
 			defaultvalue: 'false,true',
 			name: 'static',
 		}, {
+			title: 'css class',
+			datatype: 'string',
+			defaultvalue: '',
+			name: 'css-class',
+		}, {
 			title: 'in collection preview',
 			datatype: 'array',
 			defaultvalue: 'false,true',
@@ -62,6 +67,16 @@ var CoreControllerHelper = require('periodicjs.core.controllerhelper'),
 			datatype: 'array',
 			defaultvalue: 'true,false',
 			name: 'use-collection-intro',
+		}, {
+			title: 'content only',
+			datatype: 'array',
+			defaultvalue: 'false,true',
+			name: 'content-only',
+		}, {
+			title: 'css class',
+			datatype: 'string',
+			defaultvalue: '',
+			name: 'css-class',
 		}, {
 			title: 'static',
 			datatype: 'array',

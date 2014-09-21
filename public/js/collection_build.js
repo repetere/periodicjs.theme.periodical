@@ -1732,7 +1732,7 @@ module.exports = navigationHeader;
 
 },{"classie":1,"events":3,"util":7,"util-extend":13}],13:[function(require,module,exports){
 module.exports=require(10)
-},{"/Users/yawetse/Developer/test/admintest/periodicjs/content/themes/periodicjs.theme.periodical/node_modules/linotypejs/node_modules/util-extend/extend.js":10}],14:[function(require,module,exports){
+},{"/Users/yawetse/Developer/test/periodic150/periodicjs/content/themes/periodicjs.theme.periodical/node_modules/linotypejs/node_modules/util-extend/extend.js":10}],14:[function(require,module,exports){
 'use strict';
 
 var Linotype = require('linotypejs'),
@@ -1760,7 +1760,7 @@ var Linotype = require('linotypejs'),
 window.addEventListener('load', function () {
 	LinotypeCollection = new Linotype({
 		easing: true,
-		continuous: true,
+		// continuous: true,
 		// callback: function (index) {
 		// 	// if (backgroundMediaElements) {
 		// 	// 	theme.sizeAndPositionBackgroundMedia(backgroundMediaElements[index]);
