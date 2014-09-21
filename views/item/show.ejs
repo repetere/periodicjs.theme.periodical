@@ -7,7 +7,7 @@
 
 	contentStatic = (contentContentAttributes && contentEnitity.contenttypeattributes.periodical.static) ? contentEnitity.contenttypeattributes.periodical.static : false; 
 					  contentBgImgUseDefault = true;
-
+console.log('contentStatic',contentStatic=='true');
 	%>
 <body class=" ">
 	<div class="periodical-page-border top"></div>
@@ -18,10 +18,10 @@
     <% include ../shared/nav %>
   </div>
 	<% if(contentEffect){ %>
-		<div id="container" class="container intro-effect-<%=contentEnitity.contenttypeattributes.periodical.effect%> <%if(contentStatic){%>modify<%}%>  ">
+		<div id="container" class="container intro-effect-<%=contentEnitity.contenttypeattributes.periodical.effect%> <%if(contentStatic ==='true'){%>modify<%}%>  ">
 	<%}
 	else{%>
-		<div id="container" class="container intro-effect-push">
+		<div id="container" class="container intro-effect-push <%if(contentStatic ==='true'){%>modify<%}%>">
 	<%}%>
 <!-- < % include ../shared/nav % > -->
 <% include ../shared/partial/_contentEntityHeader %>

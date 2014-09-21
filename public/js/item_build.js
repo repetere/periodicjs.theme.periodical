@@ -1405,7 +1405,7 @@ var scrollY = function () {
 };
 
 var toggle = function (reveal) {
-	backgroundMedia = document.getElementById('background-media-element');
+	backgroundMedia = document.querySelector('.background-media-element');
 	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
 	isAnimating = true;
 
@@ -1435,7 +1435,7 @@ var toggle = function (reveal) {
 };
 
 var scrollPage = function () {
-	backgroundMedia = document.getElementById('background-media-element');
+	backgroundMedia = document.querySelector('.background-media-element');
 	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
 	scrollVal = scrollY();
 
@@ -1468,10 +1468,15 @@ var scrollPage = function () {
 };
 
 document.addEventListener('DOMContentLoaded', function ( /* e */ ) {
-	backgroundMedia = document.getElementById('background-media-element');
+	backgroundMedia = document.querySelector('.background-media-element');
 	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
 	backgroundMedia.addEventListener('load', resizeMedia);
 	backgroundMedia.addEventListener('loadeddata', resizeMedia);
+
+	lazyLoadMedia = theme.lazyloadBackgroundMedia(backgroundMedia);
+	backgroundMedia.addEventListener('load', lazyLoadMedia);
+
+
 }, false);
 
 window.addEventListener('resize', function ( /* e */ ) {
@@ -1483,11 +1488,10 @@ window.addEventListener('resize', function ( /* e */ ) {
 window.addEventListener('scroll', scrollPage, false);
 
 window.addEventListener('load', function () {
-	backgroundMedia = document.getElementById('background-media-element');
+	backgroundMedia = document.querySelector('.background-media-element');
 	container = document.getElementById('container');
 	trigger = container.querySelector('button.trigger');
 	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
-	lazyLoadMedia = theme.lazyloadBackgroundMedia(backgroundMedia);
 	// refreshing the page...
 	var pageScroll = scrollY();
 	noscroll = pageScroll === 0;
@@ -1518,20 +1522,32 @@ var lazyloadBackgroundMedia = function (backgroundMedia) {
 };
 
 var sizeAndPositionBackgroundMedia = function (backgroundMedia) {
-	if (backgroundMedia.clientWidth > window.innerWidth || backgroundMedia.clientHeight < window.innerHeight) {
-		if (backgroundMedia.clientWidth > window.innerWidth) {
-			var offsetMarginLeft = (backgroundMedia.clientWidth - window.innerWidth) / 2 * -1;
-			backgroundMedia.style['margin-left'] = offsetMarginLeft + 'px';
+	var mediaWidth = backgroundMedia.clientWidth,
+		mediaHeight = backgroundMedia.clientHeight,
+		windowWidth = window.innerWidth,
+		windowHeight = window.innerHeight,
+		widthDifference = mediaWidth / windowWidth,
+		heightDifference = mediaHeight / windowHeight;
+	// console.log('backgroundMedia', backgroundMedia, mediaWidth, mediaHeight, windowWidth, windowHeight, 'widthDifference', widthDifference, 'heightDifference', heightDifference);
+	console.log('resize');
+
+	if (widthDifference < heightDifference) {
+		var heightOffset = ((mediaHeight / widthDifference) - windowHeight) / 2 * -1;
+		if (widthDifference < 1) {
+			heightOffset = ((mediaHeight / widthDifference) / 2) * -1;
 		}
-		backgroundMedia.style.width = 'auto';
-		backgroundMedia.style.height = '100%';
-	}
-	else if (backgroundMedia.clientWidth <= window.innerWidth) {
 		backgroundMedia.style.width = '100%';
 		backgroundMedia.style.height = 'auto';
-		backgroundMedia.style['margin-left'] = '0px';
-		// var offsetMarginTop = (backgroundMedia.clientHeight - window.innerHeight) / 2 * -1;
-		// backgroundMedia.style.top = offsetMarginTop + 'px';
+		backgroundMedia.style['margin-top'] = heightOffset + 'px';
+	}
+	else {
+		var widthOffset = ((mediaWidth / heightDifference) - windowWidth) / 2 * -1;
+		if (heightDifference < 1) {
+			widthOffset = ((mediaWidth / heightDifference) / 2) * -1;
+		}
+		backgroundMedia.style.height = '100%';
+		backgroundMedia.style.width = 'auto';
+		backgroundMedia.style['margin-left'] = widthOffset + 'px';
 	}
 	if (classie.hasClass(backgroundMedia, 'lazyload')) {
 		lazyloadBackgroundMedia(backgroundMedia);

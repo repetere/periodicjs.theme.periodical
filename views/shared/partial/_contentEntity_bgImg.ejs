@@ -1,8 +1,8 @@
 <div class="bg-img">
-	<img id="background-media-element" class="lazyload" src=
 	<% if(contentEnitity.primaryasset && contentEnitity.primaryasset.fileurl){%>
-			"<%- contentEnitity.primaryasset.fileurl  %>"
-		<%}
-		else if(contentBgImgUseDefault){%> "<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','img') %>/periodical-default-background.jpg" <%} %>
-	 alt="Background Image"/>
+ 	<img class="lazyload background-media-element <% if(contentDimBigImg){%>dim<%}%>" src="<%- contentEnitity.primaryasset.fileurl  %>" alt="Background Image"/>
+ <%}
+ else if(contentBgImgUseDefault){%>
+ 	<img class="lazyload background-media-element <% if(contentDimBigImg){%>dim<%}%>" src="<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','img') %>/periodical-default-background.jpg" alt="Background Image"/>
+ <%} %>
 </div>	

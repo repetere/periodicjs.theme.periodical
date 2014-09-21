@@ -1,5 +1,23 @@
 .periodical-collection{
 	.linotype{
+		article{
+			min-height: 20em;
+			padding:10%;
+			background: #333;
+			.title{
+				h1{
+					a{
+						color:#fff;
+					}
+				}
+				p{
+					color:#ececec;
+				}
+			}
+			&:nth-child(even){
+				background: #707070;
+			}
+		}
 		.bg-img {
 			position: absolute;
 			overflow: hidden;
@@ -14,16 +32,41 @@
 				top: 0;
 				left: 0;
 				display: block;
-				transition: opacity 1.3s linear 0.1s;
-				opacity: 1;
+				opacity: .8;
+				
+				
 				&.lazyload {
 					opacity: 0;
 				}
 			}
+			transition: opacity 1s ease-in 0s, 
+					filter .5 ease-out 0s;
+				-webkit-transition: opacity 1s ease-in 0s, 
+					-webkit-filter .3s ease-out 0s;
+				-moz-transition: opacity 1s ease-in 0s, 
+					-moz-filter .3 ease-out 0s;
+				-ms-transition: opacity 1s ease-in 0s, 
+					-ms-filter .3 ease-out 0s;
+			&.dim{
+					-webkit-filter: grayscale(50%) contrast(75%) brightness(80%);
+					-moz-filter: grayscale(50%) contrast(75%) brightness(80%);
+					-ms-filter: grayscale(50%) contrast(75%) brightness(80%);
+					filter: grayscale(50%) contrast(75%) brightness(80%);
+				&:hover{	
+					-webkit-filter: grayscale(100%) contrast(150%) brightness(40%);
+					-moz-filter: grayscale(100%) contrast(150%) brightness(40%);
+					-ms-filter: grayscale(100%) contrast(150%) brightness(40%);
+					filter: grayscale(100%) contrast(150%) brightness(40%);
+				}
+			}
 		}
 	}
-    footer{
-        position:fixed;
-        width:90%;
-    }
+  footer{
+    position:fixed;
+		width: 100%;
+		padding: 1em 2em;
+		margin:0;
+		bottom:0;
+		left:0;
+  }
 }

@@ -81,7 +81,7 @@ var scrollY = function () {
 };
 
 var toggle = function (reveal) {
-	backgroundMedia = document.getElementById('background-media-element');
+	backgroundMedia = document.querySelector('.background-media-element');
 	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
 	isAnimating = true;
 
@@ -111,7 +111,7 @@ var toggle = function (reveal) {
 };
 
 var scrollPage = function () {
-	backgroundMedia = document.getElementById('background-media-element');
+	backgroundMedia = document.querySelector('.background-media-element');
 	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
 	scrollVal = scrollY();
 
@@ -144,10 +144,15 @@ var scrollPage = function () {
 };
 
 document.addEventListener('DOMContentLoaded', function ( /* e */ ) {
-	backgroundMedia = document.getElementById('background-media-element');
+	backgroundMedia = document.querySelector('.background-media-element');
 	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
 	backgroundMedia.addEventListener('load', resizeMedia);
 	backgroundMedia.addEventListener('loadeddata', resizeMedia);
+
+	lazyLoadMedia = theme.lazyloadBackgroundMedia(backgroundMedia);
+	backgroundMedia.addEventListener('load', lazyLoadMedia);
+
+
 }, false);
 
 window.addEventListener('resize', function ( /* e */ ) {
@@ -159,11 +164,10 @@ window.addEventListener('resize', function ( /* e */ ) {
 window.addEventListener('scroll', scrollPage, false);
 
 window.addEventListener('load', function () {
-	backgroundMedia = document.getElementById('background-media-element');
+	backgroundMedia = document.querySelector('.background-media-element');
 	container = document.getElementById('container');
 	trigger = container.querySelector('button.trigger');
 	resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMedia);
-	lazyLoadMedia = theme.lazyloadBackgroundMedia(backgroundMedia);
 	// refreshing the page...
 	var pageScroll = scrollY();
 	noscroll = pageScroll === 0;

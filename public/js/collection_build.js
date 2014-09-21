@@ -1738,15 +1738,51 @@ module.exports=require(10)
 var Linotype = require('linotypejs'),
 	periodicalTheme = require('./periodical.theme'),
 	theme = new periodicalTheme(),
-	LinotypeCollection;
+	LinotypeCollection,
+	backgroundMediaElements;
+
+// var resizeMediaElements = function () {
+// 	if (backgroundMediaElements && backgroundMediaElements.length > 0) {
+// 		for (var x in backgroundMediaElements) {
+// 			if (typeof backgroundMediaElements[x] === 'object') {
+// 				var resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMediaElements[x]);
+// 				var lazyLoadMedia = theme.lazyloadBackgroundMedia(backgroundMediaElements[x]);
+
+// 				backgroundMediaElements[x].addEventListener('load', resizeMedia);
+// 				backgroundMediaElements[x].addEventListener('load', lazyLoadMedia);
+// 				backgroundMediaElements[x].addEventListener('loadeddata', resizeMedia);
+// 				backgroundMediaElements[x].addEventListener('loadeddata', lazyLoadMedia);
+// 			}
+// 		}
+// 	}
+// };
 
 window.addEventListener('load', function () {
 	LinotypeCollection = new Linotype({
-		easing: true
+		easing: true,
+		continuous: true,
+		// callback: function (index) {
+		// 	// if (backgroundMediaElements) {
+		// 	// 	theme.sizeAndPositionBackgroundMedia(backgroundMediaElements[index]);
+		// 	// }
+		// }
 	});
 
 	window.LinotypeCollection = LinotypeCollection;
+
+	// backgroundMediaElements = document.querySelectorAll('.background-media-element');
+	// resizeMediaElements();
 }, false);
+
+// window.addEventListener('resize', resizeMediaElements, false);
+
+// document.addEventListener('DOMContentLoaded', function () {
+// 	if (!backgroundMediaElements) {
+// 		backgroundMediaElements = document.querySelectorAll('.background-media-element');
+// 	}
+// 	resizeMediaElements();
+
+// }, false);
 
 },{"./periodical.theme":15,"linotypejs":8}],15:[function(require,module,exports){
 'use strict';
@@ -1760,20 +1796,32 @@ var lazyloadBackgroundMedia = function (backgroundMedia) {
 };
 
 var sizeAndPositionBackgroundMedia = function (backgroundMedia) {
-	if (backgroundMedia.clientWidth > window.innerWidth || backgroundMedia.clientHeight < window.innerHeight) {
-		if (backgroundMedia.clientWidth > window.innerWidth) {
-			var offsetMarginLeft = (backgroundMedia.clientWidth - window.innerWidth) / 2 * -1;
-			backgroundMedia.style['margin-left'] = offsetMarginLeft + 'px';
+	var mediaWidth = backgroundMedia.clientWidth,
+		mediaHeight = backgroundMedia.clientHeight,
+		windowWidth = window.innerWidth,
+		windowHeight = window.innerHeight,
+		widthDifference = mediaWidth / windowWidth,
+		heightDifference = mediaHeight / windowHeight;
+	// console.log('backgroundMedia', backgroundMedia, mediaWidth, mediaHeight, windowWidth, windowHeight, 'widthDifference', widthDifference, 'heightDifference', heightDifference);
+	console.log('resize');
+
+	if (widthDifference < heightDifference) {
+		var heightOffset = ((mediaHeight / widthDifference) - windowHeight) / 2 * -1;
+		if (widthDifference < 1) {
+			heightOffset = ((mediaHeight / widthDifference) / 2) * -1;
 		}
-		backgroundMedia.style.width = 'auto';
-		backgroundMedia.style.height = '100%';
-	}
-	else if (backgroundMedia.clientWidth <= window.innerWidth) {
 		backgroundMedia.style.width = '100%';
 		backgroundMedia.style.height = 'auto';
-		backgroundMedia.style['margin-left'] = '0px';
-		// var offsetMarginTop = (backgroundMedia.clientHeight - window.innerHeight) / 2 * -1;
-		// backgroundMedia.style.top = offsetMarginTop + 'px';
+		backgroundMedia.style['margin-top'] = heightOffset + 'px';
+	}
+	else {
+		var widthOffset = ((mediaWidth / heightDifference) - windowWidth) / 2 * -1;
+		if (heightDifference < 1) {
+			widthOffset = ((mediaWidth / heightDifference) / 2) * -1;
+		}
+		backgroundMedia.style.height = '100%';
+		backgroundMedia.style.width = 'auto';
+		backgroundMedia.style['margin-left'] = widthOffset + 'px';
 	}
 	if (classie.hasClass(backgroundMedia, 'lazyload')) {
 		lazyloadBackgroundMedia(backgroundMedia);

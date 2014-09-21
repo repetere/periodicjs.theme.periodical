@@ -1,0 +1,20 @@
+<div class="bg-img <% if(contentDimBigImg){%>dim<%}%>" 
+
+
+
+style="
+background-image: url(<% if(contentEnitity.primaryasset && contentEnitity.primaryasset.fileurl){%>
+'<%- contentEnitity.primaryasset.fileurl  %>'
+ <%}
+ else if(contentBgImgUseDefault){%>
+'<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','img') %>/periodical-default-background.jpg'
+ <%} %>);
+background-repeat: no-repeat;
+-webkit-background-size: cover;
+background-size: cover;
+background-position: 50% 50%;
+";
+
+ >
+	
+</div>	

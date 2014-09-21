@@ -53,6 +53,16 @@ var CoreControllerHelper = require('periodicjs.core.controllerhelper'),
 			defaultvalue: 'linotype,slideshow,listical,list,grid',
 			name: 'effect',
 		}, {
+			title: 'use background image',
+			datatype: 'array',
+			defaultvalue: 'true,false',
+			name: 'use-background-image',
+		}, {
+			title: 'use collection intro',
+			datatype: 'array',
+			defaultvalue: 'true,false',
+			name: 'use-collection-intro',
+		}, {
 			title: 'static',
 			datatype: 'array',
 			defaultvalue: 'false,true',
@@ -214,6 +224,7 @@ var addDefaultCollectionContentType = function () {
 };
 
 var checkContentTypePeriodical = function (docid, callback) {
+	logger.silly('checkContentTypePeriodical');
 	CoreController.loadModel({
 		docid: docid,
 		model: Contenttype,
@@ -285,7 +296,7 @@ var setup = function (resources) {
 			}
 		});
 
-		checkContentTypePeriodical('periodical_collection', function (err, doc) {
+		checkContentTypePeriodical('periodical-collection', function (err, doc) {
 			if (err) {
 				logger.error(err);
 			}

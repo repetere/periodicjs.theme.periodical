@@ -10,21 +10,11 @@
     <% include ../shared/nav %>
   </div>
 
-<section id="linotype" class="linotype">
-	<% if(collection.items && collection.items.length>0){
-		collection.items.forEach(function(itemObj,index){%>
-			<article class="section <%if(index===0){%>active<%}%>" id="section<%= index %>">
-				<% var contentEnitity = itemObj.item;
-					  contentContentAttributes = (contentEnitity.contenttypeattributes && contentEnitity.contenttypeattributes.periodical)? true : false; 
-					  contentBgImgUseDefault = false;
-					  %>
+  <%
+  	var contentEnitity = collection;
+	  contentContentAttributes = (contentEnitity.contenttypeattributes && contentEnitity.contenttypeattributes.periodical)? true : false; 
+  %>
 
-				  
-				<% include ../shared/partial/_contentEntity_bgImg %>
-				<% include ../shared/partial/_contentEntityTitle_subTitle %>
-		  </article>
-		<%});
-	}%>
-</section>
+<% include _linotype %>
 
 <% include ../shared/footer %>
