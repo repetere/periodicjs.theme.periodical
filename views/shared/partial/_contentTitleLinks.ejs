@@ -1,5 +1,5 @@
 <div class="titlelink">
-	<%if(typeof useCollectionLink !=='undefined' && useCollectionLink===true){%>
+	<%if(contentEnitity.entitytype === 'collection' || (typeof useCollectionLink !=='undefined' && useCollectionLink===true)){%>
 	<h2><a href="/collection/<%- contentEnitity.name %>"><%- contentEnitity.title  %></a></h2>
 	<%}
 		else if(contentTitleLink){%>

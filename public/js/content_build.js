@@ -1793,7 +1793,7 @@ window.addEventListener('load', function () {
 		var pageScroll = scrollY();
 		noscroll = pageScroll === 0;
 
-
+		console.log('pageScroll', pageScroll);
 		if (pageScroll) {
 			isRevealed = true;
 			classie.add(container, 'modify');
@@ -1811,10 +1811,6 @@ window.addEventListener('load', function () {
 		});
 	}
 	window.LinotypeCollection = LinotypeCollection;
-
-	//global
-	scrollPage();
-
 
 }, false);
 
