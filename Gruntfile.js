@@ -121,7 +121,7 @@ module.exports = function (grunt) {
 					'resources/**/*.less',
 					'test/**/*.js',
 				],
-				tasks: ['lint', 'packagejs', 'less', 'test'],
+				tasks: ['lint', 'packagejs', 'less', 'copy', 'test'],
 				options: {
 					interrupt: true
 				}

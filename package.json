@@ -25,6 +25,7 @@
     "async": "0.9.0",
     "classie": ">=0.1.0",
     "linotypejs": "~1.0.3",
+    "periodicjs.component.collection_list-view-scroll": "^1.0.0",
     "periodicjs.theme-component.navigation-header": "~1.0.1"
   },
   "devDependencies": {

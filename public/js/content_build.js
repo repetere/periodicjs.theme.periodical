@@ -1735,56 +1735,85 @@ module.exports=require(10)
 },{"/Users/yawetse/Developer/test/admintest/periodicjs/content/themes/periodicjs.theme.periodical/node_modules/linotypejs/node_modules/util-extend/extend.js":10}],14:[function(require,module,exports){
 'use strict';
 
-var Linotype = require('linotypejs'),
+var classie = require('classie'),
 	periodicalTheme = require('./periodical.theme'),
 	theme = new periodicalTheme(),
+	// disable/enable scroll (mousewheel and keys) from http://stackoverflow.com/a/4770179					
+	// left: 37, up: 38, right: 39, down: 40,
+	// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
+	docElem = window.document.documentElement,
+	scrollVal,
+	isRevealed,
+	noscroll,
+	container,
+	trigger,
+	Linotype = require('linotypejs'),
 	LinotypeCollection,
-	backgroundMediaElements;
+	linotypeelement;
 
-// var resizeMediaElements = function () {
-// 	if (backgroundMediaElements && backgroundMediaElements.length > 0) {
-// 		for (var x in backgroundMediaElements) {
-// 			if (typeof backgroundMediaElements[x] === 'object') {
-// 				var resizeMedia = theme.sizeAndPositionBackgroundMedia(backgroundMediaElements[x]);
-// 				var lazyLoadMedia = theme.lazyloadBackgroundMedia(backgroundMediaElements[x]);
+var scrollY = function () {
+	return window.pageYOffset || docElem.scrollTop;
+};
 
-// 				backgroundMediaElements[x].addEventListener('load', resizeMedia);
-// 				backgroundMediaElements[x].addEventListener('load', lazyLoadMedia);
-// 				backgroundMediaElements[x].addEventListener('loadeddata', resizeMedia);
-// 				backgroundMediaElements[x].addEventListener('loadeddata', lazyLoadMedia);
-// 			}
-// 		}
-// 	}
-// };
+var toggle = function (reveal) {
+
+	if (container) {
+		if (reveal) {
+			classie.add(container, 'modify');
+
+		}
+		else {
+			classie.remove(container, 'modify');
+		}
+	}
+};
+
+var scrollPage = function () {
+	if (container) {
+		scrollVal = scrollY();
+
+		if (scrollVal < 5) {
+			classie.remove(container, 'modify');
+		}
+		else {
+			classie.add(container, 'modify');
+		}
+	}
+};
+
+window.addEventListener('scroll', scrollPage, false);
 
 window.addEventListener('load', function () {
-	LinotypeCollection = new Linotype({
-		easing: true,
-		// continuous: true,
-		// callback: function (index) {
-		// 	// if (backgroundMediaElements) {
-		// 	// 	theme.sizeAndPositionBackgroundMedia(backgroundMediaElements[index]);
-		// 	// }
-		// }
-	});
+	//items
+	container = document.getElementById('container');
+	if (container) {
+		trigger = container.querySelector('button.trigger');
+		// refreshing the page...
+		var pageScroll = scrollY();
+		noscroll = pageScroll === 0;
 
+
+		if (pageScroll) {
+			isRevealed = true;
+			classie.add(container, 'modify');
+		}
+
+		trigger.addEventListener('click', function () {
+			toggle('reveal');
+		});
+	}
+	//collections
+	linotypeelement = document.getElementById('linotype');
+	if (linotypeelement) {
+		LinotypeCollection = new Linotype({
+			easing: true,
+		});
+	}
 	window.LinotypeCollection = LinotypeCollection;
 
-	// backgroundMediaElements = document.querySelectorAll('.background-media-element');
-	// resizeMediaElements();
 }, false);
 
-// window.addEventListener('resize', resizeMediaElements, false);
-
-// document.addEventListener('DOMContentLoaded', function () {
-// 	if (!backgroundMediaElements) {
-// 		backgroundMediaElements = document.querySelectorAll('.background-media-element');
-// 	}
-// 	resizeMediaElements();
-
-// }, false);
-
-},{"./periodical.theme":15,"linotypejs":8}],15:[function(require,module,exports){
+},{"./periodical.theme":15,"classie":1,"linotypejs":8}],15:[function(require,module,exports){
 'use strict';
 
 var navigationHeader = require('periodicjs.theme-component.navigation-header'),

@@ -1,5 +1,22 @@
 .periodical-collection{
+	.list-view-scroll{
+		figure{
+			// background: black;
+			height: 100%;
+			.figure-background-image{
+				height: 100%;
+				min-height:15em;
+			}	
+		}
+	}
 	.linotype{
+		.section{
+			-webkit-transition: all .4s ease-in;
+			-moz-transition: all .4s ease-in;
+			-o-transition: all .4s ease-in;
+			-ms-transition: all .4s ease-in;
+			transition: all .4s ease-in;
+		}
 		article{
 			min-height: 20em;
 			padding: 5em 2em 2em;
@@ -36,38 +53,38 @@
 			bottom: 0;
 			-webkit-backface-visibility: hidden;
 			backface-visibility: hidden;
-			img {
-				position: absolute;
-				top: 0;
-				left: 0;
-				display: block;
-				opacity: .8;
+			// img {
+			// 	position: absolute;
+			// 	top: 0;
+			// 	left: 0;
+			// 	display: block;
+			// 	opacity: .8;
 				
 				
-				&.lazyload {
-					opacity: 0;
-				}
-			}
-			transition: opacity 1s ease-in 0s, 
-					filter .5 ease-out 0s;
-				-webkit-transition: opacity 1s ease-in 0s, 
-					-webkit-filter .3s ease-out 0s;
-				-moz-transition: opacity 1s ease-in 0s, 
-					-moz-filter .3 ease-out 0s;
-				-ms-transition: opacity 1s ease-in 0s, 
-					-ms-filter .3 ease-out 0s;
-			&.dim{	
-					-webkit-filter: grayscale(100%) contrast(150%) brightness(40%);
-					-moz-filter: grayscale(100%) contrast(150%) brightness(40%);
-					-ms-filter: grayscale(100%) contrast(150%) brightness(40%);
-					filter: grayscale(100%) contrast(150%) brightness(40%);
-				&:hover{
-					-webkit-filter: grayscale(50%) contrast(75%) brightness(80%);
-					-moz-filter: grayscale(50%) contrast(75%) brightness(80%);
-					-ms-filter: grayscale(50%) contrast(75%) brightness(80%);
-					filter: grayscale(50%) contrast(75%) brightness(80%);
-				}
-			}
+			// 	&.lazyload {
+			// 		opacity: 0;
+			// 	}
+			// }
+			// transition: opacity 1s ease-in 0s, 
+			// 		filter .5 ease-out 0s;
+			// 	-webkit-transition: opacity 1s ease-in 0s, 
+			// 		-webkit-filter .3s ease-out 0s;
+			// 	-moz-transition: opacity 1s ease-in 0s, 
+			// 		-moz-filter .3 ease-out 0s;
+			// 	-ms-transition: opacity 1s ease-in 0s, 
+			// 		-ms-filter .3 ease-out 0s;
+			// &.dim{	
+			// 		-webkit-filter: grayscale(100%) contrast(150%) brightness(40%);
+			// 		-moz-filter: grayscale(100%) contrast(150%) brightness(40%);
+			// 		-ms-filter: grayscale(100%) contrast(150%) brightness(40%);
+			// 		filter: grayscale(100%) contrast(150%) brightness(40%);
+			// 	&:hover{
+			// 		-webkit-filter: grayscale(50%) contrast(75%) brightness(80%);
+			// 		-moz-filter: grayscale(50%) contrast(75%) brightness(80%);
+			// 		-ms-filter: grayscale(50%) contrast(75%) brightness(80%);
+			// 		filter: grayscale(50%) contrast(75%) brightness(80%);
+			// 	}
+			// }
 		}
 	}
   footer{
@@ -77,6 +94,9 @@
 		margin:0;
 		bottom:0;
 		left:0;
+  }
+  .collection-content{
+  	margin-bottom: 5em;
   }
 }
 

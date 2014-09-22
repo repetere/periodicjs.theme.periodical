@@ -17,15 +17,15 @@
   <% if(typeof pagedisplaytypeSpecific ==='string'){
 	  	if(pagedisplaytypeSpecific==='item'){
 	  		%>
-			<script src="<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','js') %>item.min.js"></script>
+			<script src="<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','js') %>content.min.js"></script>
 	  		<%
 	  	} 
 	  	else if( pagedisplaytypeSpecific==='collection'){%>
-	  		<script src="<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','js') %>collection.min.js"></script>
+	  		<script src="<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','js') %>content.min.js"></script>
 		<%} 
 	}
   else{%>
-  <script src="<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','js') %>home.min.js"></script>
+  <script src="<%= locals.themehelper.themePublicResourcePath('periodicjs.theme.periodical','js') %>content.min.js"></script>
 	<%}%>
 
 
