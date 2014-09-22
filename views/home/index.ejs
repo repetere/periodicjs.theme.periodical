@@ -1,6 +1,6 @@
 <% include ../shared/header %>
 
-<body class=" item">
+<body class=" item periodical-collection" >
 	<div class="periodical-page-border top"></div>
 	<div class="periodical-page-border right"></div>
 	<div class="periodical-page-border left"></div>
@@ -8,62 +8,16 @@
 	<div class="header-container">
     <% include ../shared/nav %>
   </div>
-	
-<div id="container" class="container intro-effect-fadeout modify">
-	
-<!-- < % include ../shared/nav % > -->
-<header class="header">
-	<div class="bg-img" style="
-background-image: url(
-'/uploads/files/2014/8/22/53f79c3e0a2ec500005d3145-resize-shutterstock-216220255.jpg'
- );
-background-repeat: no-repeat;
--webkit-background-size: cover;
-background-size: cover;
-background-position: 50% 50%;
-" ;="">
+	<%
+		var collection = layoutdata.collections[0];
+		collection.items = null;
+	  var contentEnitity = collection ;
+	  contentContentAttributes = (contentEnitity.contenttypeattributes && contentEnitity.contenttypeattributes.periodical)? true : false; 
+	  contentContentCollectionAttributes = (contentEnitity.contenttypeattributes && contentEnitity.contenttypeattributes['periodical-collection'])? true : false; 
+	  showCollectionContent = false;
+	  linkCollectionTitle = true;
+	  %>
 
-</div>	
-	
-	<div class="title">
-		<h1>This Is What Happened When I Drove My Mercedes To Pick Up Food Stamps</h1>
-		
-			
-				<p class="subline"></p>
-			
-			
-			<p>
+		<% include ../collection/_collectionListViewScroll %>
 
-	by 
-	<strong>
-	<a href="/browse/authors/staff">staff</a> 
-	</strong> 
-	—
-	
-	 Posted 	
-	 in 
-				<strong><a href="/browse/categories/news">news</a></strong>, 
-				
-	on 
-	<strong>
-	 8/22/2014 
-	</strong>
-</p>
-
-		
-	</div>
-	
-</header>
-<button class="trigger" data-info="Click to read more"><span>↓</span></button>
-
-
-<article class="content">
-	
-	<% include  ../shared/partial/_listViewScroll %>
-		
-</article>
-
-
-
-	
 <% include ../shared/footer %>
