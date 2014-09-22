@@ -1824,6 +1824,7 @@ window.addEventListener('load', function () {
 var navigationHeader = require('periodicjs.theme-component.navigation-header'),
 	classie = require('classie'),
 	periodicalNavigation,
+	navScrollElementTransition,
 	navElement;
 
 var lazyloadBackgroundMedia = function (backgroundMedia) {
@@ -1864,10 +1865,10 @@ var sizeAndPositionBackgroundMedia = function (backgroundMedia) {
 };
 
 var scrollListener = function () {
-	if (navElement && window.pageYOffset > 5) {
+	if (navScrollElementTransition && navElement && window.pageYOffset > 5) {
 		classie.remove(navElement, 'transparent');
 	}
-	else if (navElement) {
+	else if (navScrollElementTransition && navElement && window.pageYOffset < 5) {
 		classie.add(navElement, 'transparent');
 	}
 };
@@ -1875,10 +1876,13 @@ var scrollListener = function () {
 var periodicaltheme = function () {
 	window.addEventListener('load', function () {
 		periodicalNavigation = new navigationHeader({
-			idSelector: 'ha-header'
+			idSelector: 'ha-header',
+			navStyle: 1,
+			subNavStyle: 4
 		});
 		window.periodicalthemenavigation = periodicalNavigation;
 		navElement = document.getElementById('ha-header');
+		navScrollElementTransition = (typeof window.useNavTransparency === 'undefined' || window.useNavTransparency === true) ? true : false;
 		scrollListener();
 	}, false);
 
