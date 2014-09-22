@@ -4,7 +4,8 @@ var path = require('path'),
 	ControllerHelper = require('periodicjs.core.controllerhelper'),
 	CoreUtilities,
 	CoreController,
-	themeController;
+	themeController,
+	logger;
 
 var homepage = function(req,res){
 	themeController.customLayout({
@@ -73,8 +74,14 @@ var homepage = function(req,res){
 		});
 };
 
+var setCacheHeader = function(req,res,next){
+	logger.warn('settings headers');
+	res.header('Cache-Control', 'public, max-age=86400');
+	next();
+};
+
 var controller = function (resources) {
-	// logger = resources.logger;
+	logger = resources.logger;
 	// mongoose = resources.mongoose;
 	// appSettings = resources.settings;
 	CoreController = new ControllerHelper(resources);
@@ -82,7 +89,8 @@ var controller = function (resources) {
 	themeController = require(path.join(process.cwd(), 'app/controller/theme'))(resources);
 
 	return {
-		homepage: homepage
+		homepage: homepage,
+		setCacheHeader: setCacheHeader
 	};
 };
 

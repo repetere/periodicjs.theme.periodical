@@ -1,14 +1,21 @@
 <% include ../shared/header %>
-<% include ../shared/nav %>
-	<div class="width100">
-		<% var fullcollection=false; %>
-		<% if(collections && collections.length>0){
-			collections.forEach(function(collection){%>
-				<% include ../shared/partial/_collection %>
-			<%});
-		}
-		else{%>
-			no collections
-		<%}%>
-	</div>
+<body class=" item periodical-collection" >
+	<div class="periodical-page-border top"></div>
+	<div class="periodical-page-border right"></div>
+	<div class="periodical-page-border left"></div>
+	<div class="periodical-page-border bottom"></div>
+	<div class="header-container">
+    <% include ../shared/nav %>
+  </div>
+  <% var collection = {}; 
+  	collection.items = collections;
+  	var useCollectionLink = true; %>
+  	<div class="listing-container">
+  		
+	  	<article class="content">	
+			  <h1 class="collection">Collections</h1>
+			  <% include _collectionListViewScroll_item %>
+	  	</article>
+
+  	</div>
 <% include ../shared/footer %>
