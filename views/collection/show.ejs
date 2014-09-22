@@ -1,7 +1,11 @@
-<% var pagedisplaytype = "content" %>
-<% var pagedisplaytypeSpecific = "collection" %>
+<% var pagedisplaytype = "content";
+	var pagedisplaytypeSpecific = "collection";
+	var contentEnitity = collection;
+	  contentContentAttributes = (contentEnitity.contenttypeattributes && contentEnitity.contenttypeattributes.periodical)? true : false; 
+	  var contentContentCollectionAttributes = (contentEnitity.contenttypeattributes && contentEnitity.contenttypeattributes['periodical-collection'])? true : false; 
+	var useListLayout = contentContentCollectionAttributes && contentEnitity.contenttypeattributes['periodical-collection'].effect==='list'; %>
 <% include ../shared/header %>
-<body class=" periodical-collection">
+<body class="<%if(useListLayout){%>item<%}%> periodical-collection">
 	<div class="periodical-page-border top"></div>
 	<div class="periodical-page-border right"></div>
 	<div class="periodical-page-border left"></div>
@@ -11,11 +15,9 @@
   </div>
 
   <%
-  	var contentEnitity = collection;
-	  contentContentAttributes = (contentEnitity.contenttypeattributes && contentEnitity.contenttypeattributes.periodical)? true : false; 
-	  var contentContentCollectionAttributes = (contentEnitity.contenttypeattributes && contentEnitity.contenttypeattributes['periodical-collection'])? true : false; 
+  	
 
-	if(contentContentCollectionAttributes && contentEnitity.contenttypeattributes['periodical-collection'].effect==='list') {
+	if(useListLayout) {
 		showCollectionContent = true;
 		%>
 		<% include _collectionListViewScroll %>

@@ -49,6 +49,7 @@ var scrollPage = function () {
 window.addEventListener('scroll', scrollPage, false);
 
 window.addEventListener('load', function () {
+
 	//items
 	container = document.getElementById('container');
 	if (container) {
@@ -75,5 +76,9 @@ window.addEventListener('load', function () {
 		});
 	}
 	window.LinotypeCollection = LinotypeCollection;
+
+	//global
+	scrollPage();
+
 
 }, false);

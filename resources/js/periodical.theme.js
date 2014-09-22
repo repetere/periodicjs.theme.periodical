@@ -42,6 +42,15 @@ var sizeAndPositionBackgroundMedia = function (backgroundMedia) {
 	}
 };
 
+var scrollListener = function () {
+	if (navElement && window.pageYOffset > 5) {
+		classie.remove(navElement, 'transparent');
+	}
+	else if (navElement) {
+		classie.add(navElement, 'transparent');
+	}
+};
+
 var periodicaltheme = function () {
 	window.addEventListener('load', function () {
 		periodicalNavigation = new navigationHeader({
@@ -49,16 +58,10 @@ var periodicaltheme = function () {
 		});
 		window.periodicalthemenavigation = periodicalNavigation;
 		navElement = document.getElementById('ha-header');
+		scrollListener();
 	}, false);
 
-	window.addEventListener('scroll', function () {
-		if (navElement && window.pageYOffset > 5) {
-			classie.remove(navElement, 'transparent');
-		}
-		else if (navElement) {
-			classie.add(navElement, 'transparent');
-		}
-	}, false);
+	window.addEventListener('scroll', scrollListener, false);
 	return {
 		navigation: periodicalNavigation,
 		sizeAndPositionBackgroundMedia: sizeAndPositionBackgroundMedia,

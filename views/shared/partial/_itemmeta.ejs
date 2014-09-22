@@ -34,4 +34,7 @@
 	}
 	%>
 	</strong>
+	<% if(typeof showCollectionMediaLink !== 'undefined' && showCollectionMediaLink === true){ %>
+    <strong><a href="/collection/<%- contentEnitity.name%>">read &raquo;</a></strong>
+  <% }%>
 </p>
