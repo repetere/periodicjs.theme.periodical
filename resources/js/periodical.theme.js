@@ -2,7 +2,8 @@
 
 var navigationHeader = require('periodicjs.theme-component.navigation-header'),
 	classie = require('classie'),
-	periodicalNavigation;
+	periodicalNavigation,
+	navElement;
 
 var lazyloadBackgroundMedia = function (backgroundMedia) {
 	classie.removeClass(backgroundMedia, 'lazyload');
@@ -47,8 +48,17 @@ var periodicaltheme = function () {
 			idSelector: 'ha-header'
 		});
 		window.periodicalthemenavigation = periodicalNavigation;
+		navElement = document.getElementById('ha-header');
 	}, false);
 
+	window.addEventListener('scroll', function () {
+		if (navElement && window.pageYOffset > 5) {
+			classie.remove(navElement, 'transparent');
+		}
+		else if (navElement) {
+			classie.add(navElement, 'transparent');
+		}
+	}, false);
 	return {
 		navigation: periodicalNavigation,
 		sizeAndPositionBackgroundMedia: sizeAndPositionBackgroundMedia,
